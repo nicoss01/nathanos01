@@ -16,9 +16,37 @@
             border: 5px solid black;
             margin: 10px;
         }
+        #commandes_mobile{
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f1f1f1;
+            border-top: 1px solid black;
+            text-align: center;
+        }
+        #commandes_mobile button{
+            font-size: 20px;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid black;
+            background-color: #f1f1f1;
+        }
+        @media only screen and (max-width: 600px) {
+            #commandes_mobile{
+                display: block;
+            }
+        }
     </style>
     <canvas width="100%" height="100%"></canvas>
     <audio id="audio" src="son.mp3" autoplay="false"></audio>
+    <div id="commandes_mobile">
+        <button onclick="x=x+vitesse; if(x>canvas.width){x=0;} rafraichir();">Droite</button>
+        <button onclick="x=x-vitesse; if(x<0){x=canvas.width-40;} rafraichir();">Gauche</button>
+        <button onclick="y=y-vitesse; if(y<0){y=canvas.height-40;} rafraichir();">Haut</button>
+        <button onclick="y=y+vitesse; if(y>canvas.height){y=0;} rafraichir();">Bas</button>
+    </div>
     <script>
         // On crée des variables qui vont servir à compter les points comme dans un vrai jeu
         // Et une variable pour la vitesse (plus on gagne de points, plus le jeu va vite !)
