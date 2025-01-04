@@ -33,6 +33,10 @@
             border: 1px solid black;
             background-color: #f1f1f1;
         }
+        #commandes_mobile .center{
+            display: flex;
+            justify-content: center;
+        }
         @media only screen and (max-width: 600px) {
             #commandes_mobile{
                 display: block;
@@ -42,10 +46,13 @@
     <canvas width="100%" height="100%"></canvas>
     <audio id="audio" src="son.mp3" autoplay="false"></audio>
     <div id="commandes_mobile">
-        <button onclick="x=x+vitesse; if(x>canvas.width){x=0;} rafraichir();">Droite</button>
-        <button onclick="x=x-vitesse; if(x<0){x=canvas.width-40;} rafraichir();">Gauche</button>
-        <button onclick="y=y-vitesse; if(y<0){y=canvas.height-40;} rafraichir();">Haut</button>
-        <button onclick="y=y+vitesse; if(y>canvas.height){y=0;} rafraichir();">Bas</button>
+        <!-- add button positionned like directionnal pad -->
+        <button id="up">↑</button>
+        <div class="center">
+            <button id="left">←</button>
+            <button id="right">→</button>
+        </div>
+        <button id="down">↓</button>
     </div>
     <script>
         // On crée des variables qui vont servir à compter les points comme dans un vrai jeu
@@ -55,8 +62,14 @@
         // On prépare la zone où on va jouer (comme une feuille de dessin)
         // On dit qu'elle doit prendre presque toute la taille de l'écran
         const canvas = document.querySelector("canvas");
+        // if mobile, set canvas size to window size less commandes_mobile height
         canvas.width = window.innerWidth-30;
-        canvas.height = window.innerHeight-30;
+        if(window.innerWidth<600){
+            canvas.height = window.innerHeight-200;
+        }
+        else{
+            canvas.height = window.innerHeight-30;
+        }
         const ctx = canvas.getContext("2d");
 
         // On dessine un carré bleu qui sera le personnage que tu vas contrôler
@@ -113,6 +126,30 @@
             }
         });
 
+        // add event listener for mobile buttons on touch event and click event and trigger event
+        document.querySelectorAll("#commandes_mobile button").forEach(function(bouton){
+            "click touchstart".split(" ").forEach(function(evenement){
+                bouton.addEventListener(evenement,function(){
+                    if(bouton.id=="up"){
+                        // fire event for keydown event with key "z"
+                        document.dispatchEvent(new KeyboardEvent("keydown", {key: "z"}));
+                    }
+                    if(bouton.id=="down"){
+                        // fire event for keydown event with key "s"
+                        document.dispatchEvent(new KeyboardEvent("keydown", {key: "s"}));
+                    }
+                    if(bouton.id=="left"){
+                        // fire event for keydown event with key "q"
+                        document.dispatchEvent(new KeyboardEvent("keydown", {key: "q"}));
+                    }
+                    if(bouton.id=="right"){
+                        // fire event for keydown event with key "d"
+                        document.dispatchEvent(new KeyboardEvent("keydown", {key: "d"}));
+                    }
+                    rafraichir();
+                });
+            });
+        });
         // Cette fonction est comme un peintre qui redessine tout l'écran à chaque fois que tu bouges
         function rafraichir(){
             ctx.clearRect(0, 0, canvas.width, canvas.height); // D'abord on efface tout
@@ -120,8 +157,15 @@
             ctx.fillRect(x, y, 40, 40); // On redessine ton carré bleu à sa nouvelle position
             // On écrit ton score et la vitesse du jeu en haut à gauche
             ctx.font = "19px Arial";
-            ctx.fillText("Points : "+points,10,20);
-            ctx.fillText("Vitesse : "+vitesse,10,40);
+            // if mobile, set text position to bottom left
+            if(window.innerWidth<600){
+                ctx.fillText("Points : "+points,10,canvas.height-20);
+                ctx.fillText("Vitesse : "+vitesse,10,canvas.height-40);
+            }
+            else{
+                ctx.fillText("Points : "+points,10,20);
+                ctx.fillText("Vitesse : "+vitesse,10,40);
+            }
             // add image from local file
             ctx.drawImage(img, objetX, objetY, 50, 50);
             verifierCollision();
