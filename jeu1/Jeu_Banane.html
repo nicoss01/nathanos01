@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test canvas</title>
+</head>
+<body>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        canvas{
+            border: 5px solid black;
+            margin: 10px;
+        }
+    </style>
+    <canvas width="100%" height="100%"></canvas>
+    <audio id="audio" src="sci-fi-bubble-pop-89059.mp3" autoplay="false"></audio>
+    <script>
+        // On crée des variables qui vont servir à compter les points comme dans un vrai jeu
+        // Et une variable pour la vitesse (plus on gagne de points, plus le jeu va vite !)
+        var points = 0;
+        var vitesse = 5;
+        // On prépare la zone où on va jouer (comme une feuille de dessin)
+        // On dit qu'elle doit prendre presque toute la taille de l'écran
+        const canvas = document.querySelector("canvas");
+        canvas.width = window.innerWidth-30;
+        canvas.height = window.innerHeight-30;
+        const ctx = canvas.getContext("2d");
+
+        // On dessine un carré bleu qui sera le personnage que tu vas contrôler
+        // On choisit sa position de départ : x pour la position gauche/droite, y pour haut/bas
+        ctx.fillStyle ="#2E7EFF";
+        var x=200;
+        var y=100;
+        ctx.fillRect(x, y, 40, 40);
+
+        // On dessine un carré rouge que tu devras attraper
+        // Il apparaît à un endroit au hasard sur l'écran
+        objetX=Math.floor(Math.random()*(canvas.width-80))+40;
+        objetY=Math.floor(Math.random()*(canvas.height-80))+40;
+        var img = new Image();
+        img.src = 'image banane.png';
+        img.onload = function(){
+            ctx.drawImage(img, objetX, objetY, 50, 50);
+        }        
+
+        // C'est ici qu'on dit ce qui se passe quand tu appuies sur les flèches du clavier
+        document.addEventListener("keydown",function(infosEvenement){
+            // Si tu appuies sur la flèche droite, le carré bleu va à droite
+            // S'il arrive au bout de l'écran, il réapparaît à gauche (comme dans Pac-Man!)
+            if(infosEvenement.key === "d"){
+                x=x+vitesse;
+                if(x>canvas.width){
+                    x=0;
+                }
+                rafraichir();
+            }
+            // Pareil pour la flèche gauche : le carré va à gauche
+            if(infosEvenement.key === "q"){
+                x=x-vitesse;
+                if(x<0){
+                    x=canvas.width-40;
+                }
+                rafraichir();
+            }
+            // Avec la flèche du haut, le carré monte vers le haut de l'écran
+            if(infosEvenement.key === "z"){
+                y=y-vitesse;
+                if(y<0){
+                    y=canvas.height-40;
+                }
+                rafraichir();
+            }
+            // Et avec la flèche du bas, il descend vers le bas de l'écran
+            if(infosEvenement.key === "s"){
+                y=y+vitesse;
+                if(y>canvas.height){
+                    y=0;
+                }
+                rafraichir();
+            }
+        });
+
+        // Cette fonction est comme un peintre qui redessine tout l'écran à chaque fois que tu bouges
+        function rafraichir(){
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // D'abord on efface tout
+            ctx.fillStyle ="#2E7EFF";
+            ctx.fillRect(x, y, 40, 40); // On redessine ton carré bleu à sa nouvelle position
+            // On écrit ton score et la vitesse du jeu en haut à gauche
+            ctx.font = "19px Arial";
+            ctx.fillText("Points : "+points,10,20);
+            ctx.fillText("Vitesse : "+vitesse,10,40);
+            // add image from local file
+            ctx.drawImage(img, objetX, objetY, 50, 50);
+            verifierCollision();
+        }
+
+        // Cette fonction vérifie si ton carré bleu touche le carré rouge
+        // C'est comme quand tu attrapes un bonbon dans un vrai jeu !
+        function verifierCollision(){
+            if(((x>=objetX && x<=objetX+40) || (x+40>=objetX && x+40<=objetX+40)) && ((y>=objetY && y<=objetY+40) || (y+40>=objetY && y+40<=objetY+40))){
+                // play sound
+                var audio = document.getElementById("audio");
+                audio.play();
+                points=points+1; // Tu gagnes un point quand tu attrapes le carré rouge
+                // Le carré rouge va se cacher ailleurs sur l'écran
+                objetX=Math.floor(Math.random()*(canvas.width-80))+40;
+                objetY=Math.floor(Math.random()*(canvas.height-80))+40;
+                vitesse*=1.08; // Le jeu devient un tout petit peu plus rapide
+                if(points%10==0){
+                    vitesse=vitesse/1.6;
+                }
+                rafraichir();
+            }
+        }
+    </script>
+</body>
+</html>
