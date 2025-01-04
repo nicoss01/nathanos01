@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu n°1 - Banana killer</title>
+    <title>Jeu n°1 - Banana Killer</title>
 </head>
 <body>
     <style>
@@ -18,7 +18,7 @@
         }
     </style>
     <canvas width="100%" height="100%"></canvas>
-    <audio id="audio" src="sci-fi-bubble-pop-89059.mp3" autoplay="false"></audio>
+    <audio id="audio" src="son.mp3" autoplay="false"></audio>
     <script>
         // On crée des variables qui vont servir à compter les points comme dans un vrai jeu
         // Et une variable pour la vitesse (plus on gagne de points, plus le jeu va vite !)
@@ -43,7 +43,7 @@
         objetX=Math.floor(Math.random()*(canvas.width-80))+40;
         objetY=Math.floor(Math.random()*(canvas.height-80))+40;
         var img = new Image();
-        img.src = 'image banane.png';
+        img.src = 'banane.png';
         img.onload = function(){
             ctx.drawImage(img, objetX, objetY, 50, 50);
         }        
